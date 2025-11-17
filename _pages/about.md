@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-<p style="text-align:justify"> I am a Quantitative Researcher in Cambridge, MA. I work at QLS Advisors, an investment manager that is dedicated to improving outcomes for both healthcare investors and patients. The company was founded in 2019 by MIT Professor Andrew W. Lo and Shomesh E. Chaudhuri. </p>
+<p style="text-align:justify"> I am a Quantitative Researcher in Cambridge, MA. I work at QLS Advisors, an investment manager that is dedicated to improving outcomes for both healthcare investors and patients.  </p>
 
 <p style="text-align:justify"> I have previous experiences in software engineering, teaching and research. </p>
 
