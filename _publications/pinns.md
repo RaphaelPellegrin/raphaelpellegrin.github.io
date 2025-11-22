@@ -4,7 +4,7 @@ collection: publications
 permalink: /publication/pinns-for-branched-flows
 excerpt: 'This paper is about PINNS for branched flows.'
 date: 2022-11-19
-venue: 'NeurIPS 2022, Machine Learning and the Physical Sciences Workshop'
+venue: 'NeurIPS, Machine Learning and the Physical Sciences Workshop'
 paperurl: https://raphaelpellegrin.github.io/files/Branched_Flows_PINNs_Workshop_camera.pdf
 ---
 
