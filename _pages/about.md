@@ -12,9 +12,9 @@ redirect_from:
 
 <p style="text-align:justify"> I have previous experiences in software engineering, teaching and research. </p>
 
-<p style="text-align:justify"> I obtained a BSc in Mathematics at Imperial College London and an MSc in Mathematical Sciences at the University of Oxford. In England, my research interests were mostly in differential geometry, computational algebra and graph theory. I spent summers at CMAP (working on tropical geometry), at MIP MIS (working on SDPs) and "back home" at Imperial and Oxford.</p>
+<p style="text-align:justify"> I obtained a BSc in Mathematics at Imperial College London and an MSc in Mathematical Sciences at the University of Oxford. In England, my research interests were mostly in differential geometry, computational algebra and graph theory. I spent summers at CMAP (working on tropical geometry), at MIP MIS (working on SDPs) and at Imperial and Oxford.</p>
 
-<p style="text-align:justify"> I graduated from Harvard University with an ME in Computational Science and Engineering in 2022. In Cambridge, I was fortunate to be taught by great professors and mentors including Chris Rycroft and Weiwei Pan and to be advised by Pavlos Protopapas and Marios Mattheakis for my thesis.</p>
+<p style="text-align:justify"> I graduated from Harvard University with an ME in Computational Science and Engineering in 2022. In Cambridge, I was fortunate to be guided by great professors and mentors including Chris Rycroft and Weiwei Pan and to be advised by Pavlos Protopapas and Marios Mattheakis for my thesis.</p>
 
 <p style="text-align:justify"> Currently, my research is in machine learning (PINNs, geometric deep learning).</p>
 
