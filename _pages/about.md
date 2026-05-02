@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-<p style="text-align:justify"> I am a Quantitative Researcher in Cambridge, MA. I work at QLS Advisors, an investment manager that is dedicated to improving outcomes for both healthcare investors and patients.  </p>
+<p style="text-align:justify"> I am a Machine Learning Engineer at PhysicsX, working on scientific ML. Previously, I was a Quantitative Researcher in Cambridge, MA. I worked at QLS Advisors, an investment manager that is dedicated to improving outcomes for both healthcare investors and patients.  </p>
 
 <p style="text-align:justify"> I have previous experiences in software engineering, teaching and research. </p>
 
