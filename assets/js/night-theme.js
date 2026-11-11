@@ -34,6 +34,26 @@
   }
 
   /**
+   * Swap themeable images (e.g. day/night hypergraph GIFs).
+   *
+   * @param {boolean} isNight Whether night theme is active.
+   * @returns {void}
+   */
+  function syncThemeableImages(isNight) {
+    document.querySelectorAll("[data-theme-src-day]").forEach(function (node) {
+      if (!(node instanceof HTMLImageElement)) {
+        return;
+      }
+      var daySrc = node.getAttribute("data-theme-src-day") || "";
+      var nightSrc = node.getAttribute("data-theme-src-night") || daySrc;
+      var nextSrc = isNight ? nightSrc : daySrc;
+      if (nextSrc && node.getAttribute("src") !== nextSrc) {
+        node.setAttribute("src", nextSrc);
+      }
+    });
+  }
+
+  /**
    * Apply a theme to the document and remember it.
    *
    * @param {string} theme Theme id (`night` or `day`).
@@ -62,6 +82,8 @@
       );
       button.setAttribute("aria-pressed", isNight ? "true" : "false");
     }
+
+    syncThemeableImages(isNight);
 
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);

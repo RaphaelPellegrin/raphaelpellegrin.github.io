@@ -27,9 +27,17 @@ My Erdős number is 4 and my Einstein number is 6. To the best of my knowledge, 
 </div>
 
 <div class="home-plots">
-  <p><img src="{{ base_path }}/images/Burger.png" alt="Burger"></p>
-  <p><img src="{{ base_path }}/images/graph.png" alt="Graph"></p>
-  <p><img src="{{ base_path }}/images/hypergraph_random_walk.gif" alt="Hypergraph"></p>
+  <p><img class="home-plot--day-only" src="{{ base_path }}/images/Burger.png" alt="Burger"></p>
+  <p><img class="home-plot--day-only" src="{{ base_path }}/images/graph.png" alt="Graph"></p>
+  <p>
+    <img
+      class="home-plot-themeable"
+      src="{{ base_path }}/images/hypergraph_random_walk.gif"
+      data-theme-src-day="{{ base_path }}/images/hypergraph_random_walk.gif"
+      data-theme-src-night="{{ base_path }}/images/hypergraph_random_walk_night.gif"
+      alt="Hypergraph random walk"
+    >
+  </p>
 </div>
 
 <script src="{{ base_path }}/assets/js/home-gol.js"></script>
