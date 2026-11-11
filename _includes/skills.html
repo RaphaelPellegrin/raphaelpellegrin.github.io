@@ -35,20 +35,4 @@
       </div>
     {% endfor %}
   </div>
-
-  <div class="skills-cloud" aria-hidden="true">
-    <div class="skills-cloud__canvas" data-skills-cloud>
-      {% for group in site.data.skills %}
-        {% assign cloud_items = group.cloud | default: group.items %}
-        {% for item in cloud_items %}
-          <span
-            class="skills-cloud__word"
-            style="--skills-color: {{ group.color }}; --skills-weight: {{ item.weight | default: 3 }};"
-            data-weight="{{ item.weight | default: 3 }}"
-          >{{ item.name }}</span>
-        {% endfor %}
-      {% endfor %}
-    </div>
-    <p class="skills-cloud__caption">A little skills map — generated on this page.</p>
-  </div>
 </section>
