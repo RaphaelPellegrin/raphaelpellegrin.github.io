@@ -31,6 +31,122 @@
   }
 
   /**
+   * Build a parent-map of filter tag buttons from the DOM.
+   * @returns {Object<string, {el: HTMLElement, parent: string}>}
+   */
+  function buildTagTree() {
+    var tree = {};
+    document.querySelectorAll("[data-tag-filter]").forEach(function (button) {
+      var slug = button.getAttribute("data-tag-filter") || "";
+      if (!slug) {
+        return;
+      }
+      tree[slug] = {
+        el: button,
+        parent: button.getAttribute("data-tag-parent-slug") || "",
+      };
+    });
+    return tree;
+  }
+
+  /**
+   * Return the ancestor chain from a tag up to a root, inclusive.
+   * @param {string} slug Tag slug.
+   * @param {Object<string, {el: HTMLElement, parent: string}>} tree Tag tree.
+   * @returns {string[]}
+   */
+  function pathToRoot(slug, tree) {
+    var path = [];
+    var current = slug;
+    var guard = 0;
+    while (current && tree[current] && guard < 8) {
+      path.push(current);
+      current = tree[current].parent;
+      guard += 1;
+    }
+    return path;
+  }
+
+  /**
+   * Show/hide child filter chips from the active parent selection.
+   * Selecting Machine Learning reveals Geometric ML; turning it off hides the subtree.
+   * @param {string} activeTag Active tag slug, or "" for all.
+   * @returns {void}
+   */
+  function syncHierarchyVisibility(activeTag) {
+    var tree = buildTagTree();
+    var expanded = {};
+    var onPath = {};
+
+    if (activeTag && tree[activeTag]) {
+      pathToRoot(activeTag, tree).forEach(function (slug) {
+        expanded[slug] = true;
+        onPath[slug] = true;
+      });
+    }
+
+    Object.keys(tree).forEach(function (slug) {
+      var node = tree[slug];
+      var visible;
+      if (!node.parent) {
+        visible = true;
+      } else if (!activeTag) {
+        visible = false;
+      } else {
+        visible = !!expanded[node.parent] || !!onPath[slug];
+      }
+      node.el.classList.toggle("is-hierarchy-hidden", !visible);
+      node.el.setAttribute("aria-hidden", visible ? "false" : "true");
+      if (!visible) {
+        node.el.tabIndex = -1;
+      } else {
+        node.el.removeAttribute("tabindex");
+      }
+    });
+
+    document.querySelectorAll(".pub-tag-col__subgroup").forEach(function (group) {
+      if (!(group instanceof HTMLElement) || group.classList.contains("is-empty")) {
+        return;
+      }
+      var visibleChip = group.querySelector(
+        "[data-tag-filter]:not(.is-hierarchy-hidden)"
+      );
+      group.classList.toggle("is-hierarchy-hidden", !visibleChip);
+    });
+
+    document.querySelectorAll(".pub-tag-col").forEach(function (col) {
+      if (!(col instanceof HTMLElement)) {
+        return;
+      }
+      var visibleChip = col.querySelector(
+        "[data-tag-filter]:not(.is-hierarchy-hidden)"
+      );
+      var hasVisibleSubgroup = col.querySelector(
+        ".pub-tag-col__subgroup:not(.is-empty):not(.is-hierarchy-hidden)"
+      );
+      col.classList.toggle(
+        "is-hierarchy-hidden",
+        !visibleChip && !hasVisibleSubgroup
+      );
+    });
+
+    document.querySelectorAll(".pub-tag-level").forEach(function (level) {
+      if (!(level instanceof HTMLElement)) {
+        return;
+      }
+      var levelId = level.getAttribute("data-tag-level");
+      if (levelId === "0") {
+        level.classList.remove("is-hierarchy-empty");
+        return;
+      }
+      var visibleChip = level.querySelector(
+        "[data-tag-filter]:not(.is-hierarchy-hidden)"
+      );
+      level.classList.toggle("is-hierarchy-empty", !visibleChip);
+    });
+  }
+
+  /**
    * Apply the active tag filter across all filterable items.
    * @param {string} activeTag Active tag slug, or "" for all.
    * @returns {void}
@@ -93,6 +209,8 @@
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", isActive ? "true" : "false");
     });
+
+    syncHierarchyVisibility(activeTag);
 
     if (history.replaceState) {
       var url = new URL(window.location.href);
