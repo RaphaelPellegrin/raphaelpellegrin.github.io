@@ -3,8 +3,8 @@
    ========================================================================== */
 
 .pub-tag-filter {
-  margin: 0 0 1.25em;
-  padding: 0.7em 0.8em 0.75em;
+  margin: 0 0 1.5em;
+  padding: 1em 1.1em;
   border: 1px solid mix(#fff, $gray, 78%);
   background: linear-gradient(180deg, #f7f9fb 0%, #fff 100%);
 }
@@ -13,16 +13,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.45em 0.65em;
-  margin: 0 0 0.55em;
+  gap: 0.65em 0.85em;
+  margin: 0 0 0.85em;
 }
 
 .pub-tag-filter__label {
   display: block;
   margin: 0;
-  font-size: $type-size-7;
+  font-size: $type-size-6;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: $dark-gray;
 }
@@ -30,27 +30,26 @@
 .pub-tag-filter__row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4em 0.5em;
+  gap: 0.55em 0.65em;
   align-items: center;
 }
 
 .pub-tag-filter__hint {
-  margin: 0.55em 0 0;
-  font-size: $type-size-7;
+  margin: 0.75em 0 0;
+  font-size: $type-size-6;
   color: $gray;
-  line-height: 1.4;
 }
 
 .pub-tag-tree {
   display: flex;
   flex-direction: column;
-  gap: 0.4em;
+  gap: 0.55em;
 }
 
 .pub-tag-level {
   display: grid;
-  grid-template-columns: 1.35rem minmax(0, 1fr);
-  gap: 0.25rem 0.4rem;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: 0.45rem 0.55rem;
   align-items: start;
 }
 
@@ -60,12 +59,12 @@
 
 .pub-tag-fold {
   appearance: none;
-  width: 1.35rem;
-  height: 1.35rem;
-  margin: 1.05rem 0 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: 0.1rem 0 0;
   padding: 0;
   border: 1px solid mix(#fff, $gray, 78%);
-  border-radius: 0.3rem;
+  border-radius: 0.4rem;
   background: #fff;
   color: $dark-gray;
   cursor: pointer;
@@ -88,10 +87,10 @@
 
 .pub-tag-fold__icon {
   display: block;
-  width: 0.42rem;
-  height: 0.42rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
   transform: rotate(45deg);
   transition: transform 0.18s ease;
 }
@@ -100,20 +99,10 @@
   min-width: 0;
 }
 
-.pub-tag-level__caption {
-  margin: 0 0 0.28em;
-  color: $gray;
-  font-family: $sans-serif;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .pub-tag-columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
-  gap: 0.45rem 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+  gap: 0.65rem 1rem;
   align-items: start;
 }
 
@@ -125,54 +114,25 @@
 .pub-tag-col__subgroup {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.28em 0.32em;
+  gap: 0.45em 0.5em;
   align-items: center;
 }
 
 .pub-tag-col__subcolumns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
-  gap: 0.35rem 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.85rem;
   align-items: start;
-}
-
-.pub-tag-col__parent-label {
-  display: block;
-  width: 100%;
-  margin: 0 0 0.12em;
-  color: $gray;
-  font-family: $sans-serif;
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  line-height: 1.2;
-}
-
-.pub-tag-col__subgroup.is-empty {
-  min-height: 0.1px;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.pub-tag.is-hierarchy-hidden,
-.pub-tag-col__subgroup.is-hierarchy-hidden,
-.pub-tag-col.is-hierarchy-hidden {
-  display: none !important;
-}
-
-.pub-tag-level.is-hierarchy-empty {
-  display: none;
 }
 
 .pub-tag-level[data-tag-level="1"] .pub-tag-col,
 .pub-tag-level[data-tag-level="2"] .pub-tag-col {
-  padding-left: 0.15rem;
+  padding-left: 0.35rem;
 }
 
-.pub-tag-level[data-tag-level="2"] .pub-tag-col__subgroup:not(.is-empty) {
+.pub-tag-level[data-tag-level="2"] .pub-tag-col__subgroup {
   border-left: 2px solid mix(#fff, $gray, 82%);
-  padding-left: 0.4rem;
+  padding-left: 0.55rem;
 }
 
 .pub-tag-chain {
@@ -218,14 +178,14 @@ a.pub-tag {
   position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 1.45em;
-  padding: 0.18em 0.7em 0.18em 0.8em;
+  min-height: 1.9em;
+  padding: 0.28em 0.95em 0.28em 1.05em;
   color: #fff;
   background: var(--pub-tag-color, #5a6a72);
   font-family: $sans-serif;
-  font-size: $type-size-7;
+  font-size: $type-size-6;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   text-decoration: none;
   white-space: nowrap;
   clip-path: polygon(
@@ -297,17 +257,13 @@ a.pub-tag {
   clip-path: none;
   border-radius: 999px;
   background: $dark-gray;
-  padding: 0.16em 0.65em;
-  font-size: 0.68rem;
-  min-height: 1.35em;
+  padding: 0.28em 0.9em;
 }
 
 .pub-tag-filter .pub-tag {
   clip-path: none;
   border-radius: 999px;
-  padding: 0.16em 0.55em;
-  font-size: 0.68rem;
-  min-height: 1.35em;
+  padding: 0.32em 0.85em;
 }
 
 .publication-item.is-hidden,

@@ -17,5 +17,3 @@ package-lock.json
 
 # Draft slides kept locally until polished
 files/talk_geoml_sigma.pptx
-# Local helper scripts (not for the site build)
-scripts/

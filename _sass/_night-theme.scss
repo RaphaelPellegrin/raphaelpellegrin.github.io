@@ -209,12 +209,7 @@ html[data-theme="night"] {
     }
   }
 
-  .pub-tag-level__caption,
-  .pub-tag-col__parent-label {
-    color: #8b949e;
-  }
-
-  .pub-tag-level[data-tag-level="2"] .pub-tag-col__subgroup:not(.is-empty) {
+  .pub-tag-level[data-tag-level="2"] .pub-tag-col__subgroup {
     border-left-color: #2a313a;
   }
 

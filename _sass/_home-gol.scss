@@ -3,26 +3,16 @@
    ========================================================================== */
 
 .home-gol {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  position: relative;
+  margin: 1.4em 0 1.1em;
+  height: clamp(140px, 22vw, 210px);
+  border-radius: 0.85rem;
   overflow: hidden;
-  // Soften the center so body copy stays readable while the field feels unbounded.
-  -webkit-mask-image: radial-gradient(
-    ellipse 58% 62% at 58% 42%,
-    rgba(0, 0, 0, 0.12) 0%,
-    rgba(0, 0, 0, 0.45) 42%,
-    rgba(0, 0, 0, 0.9) 72%,
-    #000 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 58% 62% at 58% 42%,
-    rgba(0, 0, 0, 0.12) 0%,
-    rgba(0, 0, 0, 0.45) 42%,
-    rgba(0, 0, 0, 0.9) 72%,
-    #000 100%
-  );
+  border: 1px solid mix(#fff, $gray, 82%);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(31, 95, 139, 0.1), transparent 55%),
+    radial-gradient(ellipse at 100% 80%, rgba(31, 138, 112, 0.08), transparent 50%),
+    linear-gradient(180deg, #f7f9fb 0%, #eef3f7 100%);
 }
 
 .home-gol__canvas {
@@ -31,11 +21,16 @@
   height: 100%;
 }
 
-.masthead,
-#main,
-.page__footer {
-  position: relative;
-  z-index: 1;
+.home-gol__label {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 0.55rem;
+  margin: 0;
+  color: $gray;
+  font-size: $type-size-6;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  opacity: 0.85;
 }
 
 .home-plots {
@@ -50,7 +45,19 @@
 }
 
 html[data-theme="night"] {
-  .home-plot--day-only {
+  .home-gol {
+    border-color: #2a313a;
+    background:
+      radial-gradient(ellipse at 12% 0%, rgba(142, 192, 245, 0.12), transparent 55%),
+      radial-gradient(ellipse at 100% 80%, rgba(72, 166, 140, 0.1), transparent 50%),
+      linear-gradient(180deg, #171b22 0%, #12151a 100%);
+  }
+
+  .home-gol__label {
+    color: #9aa3ad;
+  }
+
+  .home-plots {
     display: none;
   }
 }

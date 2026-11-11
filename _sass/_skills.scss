@@ -149,23 +149,17 @@
 .skills-cloud__word {
   position: absolute;
   left: 50%;
-  top: -2rem;
+  top: 50%;
   transform: translate(-50%, -50%);
   color: var(--skills-color, $dark-gray);
   font-family: $sans-serif-narrow;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
-  opacity: 0;
+  opacity: 0.92;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   user-select: none;
   pointer-events: none;
-  will-change: left, top, transform, opacity;
-
-  &.is-settled {
-    opacity: 0.92;
-    will-change: auto;
-  }
 }
 
 .skills-cloud__caption {

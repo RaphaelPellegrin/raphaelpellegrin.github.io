@@ -1,8 +1,5 @@
 {% comment %}
-  Compact hierarchical area filter.
-  Mid/leaf chips share one column per mid-area so Geometry children
-  stay under Geometry (not Computational Algebra), following common
-  hierarchical-facet practice.
+  Foldable hierarchical area filter.
   Expects:
     include.items — collection array to derive used tags from
     include.tag_names — optional explicit tag-name array to show
@@ -72,7 +69,6 @@
           <span class="sr-only">Fold top-level areas</span>
         </button>
         <div id="pub-tag-level-0" class="pub-tag-level__body" data-tag-fold-panel="0">
-          <p class="pub-tag-level__caption">Top-level</p>
           <div class="pub-tag-columns">
             {% for tag in site.data.publication_tags %}
               {% assign needle = tag.name | append: "||" %}
@@ -113,31 +109,27 @@
           <span class="sr-only">Fold mid-level areas</span>
         </button>
         <div id="pub-tag-level-1" class="pub-tag-level__body" data-tag-fold-panel="1">
-          <p class="pub-tag-level__caption">Mid-level</p>
           <div class="pub-tag-columns">
             {% for root in site.data.publication_tags %}
               {% assign root_needle = root.name | append: "||" %}
               {% if used_tag_csv contains root_needle %}
                 {% if root.parent == nil or root.parent == "" %}
                   <div class="pub-tag-col" data-tag-branch="{{ root.slug }}">
-                    <div class="pub-tag-col__subcolumns">
-                      {% for mid in site.data.publication_tags %}
-                        {% assign mid_needle = mid.name | append: "||" %}
-                        {% if used_tag_csv contains mid_needle and mid.parent == root.name %}
-                          <div class="pub-tag-col__subgroup" data-tag-parent="{{ mid.slug }}">
-                            <button
-                              type="button"
-                              class="pub-tag pub-tag--{{ mid.slug }}"
-                              style="--pub-tag-color: {{ mid.color }};"
-                              data-tag-filter="{{ mid.slug }}"
-                              data-tag-parent-slug="{{ root.slug }}"
-                              data-tag-name="{{ mid.name | escape }}"
-                              title="Part of {{ mid.parent }} — Show items tagged {{ mid.name | escape }}"
-                              aria-pressed="false"
-                            >
-                              <span class="pub-tag__label">{{ mid.name }}</span>
-                            </button>
-                          </div>
+                    <div class="pub-tag-col__group">
+                      {% for tag in site.data.publication_tags %}
+                        {% assign needle = tag.name | append: "||" %}
+                        {% if used_tag_csv contains needle and tag.parent == root.name %}
+                          <button
+                            type="button"
+                            class="pub-tag pub-tag--{{ tag.slug }}"
+                            style="--pub-tag-color: {{ tag.color }};"
+                            data-tag-filter="{{ tag.slug }}"
+                            data-tag-name="{{ tag.name | escape }}"
+                            title="Part of {{ tag.parent }} — Show items tagged {{ tag.name | escape }}"
+                            aria-pressed="false"
+                          >
+                            <span class="pub-tag__label">{{ tag.name }}</span>
+                          </button>
                         {% endif %}
                       {% endfor %}
                     </div>
@@ -164,7 +156,6 @@
           <span class="sr-only">Fold specialist areas</span>
         </button>
         <div id="pub-tag-level-2" class="pub-tag-level__body" data-tag-fold-panel="2">
-          <p class="pub-tag-level__caption">Specialist</p>
           <div class="pub-tag-columns">
             {% for root in site.data.publication_tags %}
               {% assign root_needle = root.name | append: "||" %}
@@ -173,8 +164,7 @@
                   <div class="pub-tag-col" data-tag-branch="{{ root.slug }}">
                     <div class="pub-tag-col__subcolumns">
                       {% for mid in site.data.publication_tags %}
-                        {% assign mid_needle = mid.name | append: "||" %}
-                        {% if used_tag_csv contains mid_needle and mid.parent == root.name %}
+                        {% if mid.parent == root.name %}
                           {% assign mid_has_used_child = false %}
                           {% for leaf in site.data.publication_tags %}
                             {% assign leaf_needle = leaf.name | append: "||" %}
@@ -182,17 +172,8 @@
                               {% assign mid_has_used_child = true %}
                             {% endif %}
                           {% endfor %}
-                          {% comment %}
-                            Keep an empty column for mids without children so Geometry
-                            leaves stay under Geometry and do not slide under Algebra.
-                          {% endcomment %}
-                          <div
-                            class="pub-tag-col__subgroup{% unless mid_has_used_child %} is-empty{% endunless %}"
-                            data-tag-parent="{{ mid.slug }}"
-                            {% unless mid_has_used_child %}aria-hidden="true"{% endunless %}
-                          >
-                            {% if mid_has_used_child %}
-                              <span class="pub-tag-col__parent-label">{{ mid.name }}</span>
+                          {% if mid_has_used_child %}
+                            <div class="pub-tag-col__subgroup" data-tag-parent="{{ mid.slug }}">
                               {% for leaf in site.data.publication_tags %}
                                 {% assign leaf_needle = leaf.name | append: "||" %}
                                 {% if used_tag_csv contains leaf_needle and leaf.parent == mid.name %}
@@ -201,7 +182,6 @@
                                     class="pub-tag pub-tag--{{ leaf.slug }}"
                                     style="--pub-tag-color: {{ leaf.color }};"
                                     data-tag-filter="{{ leaf.slug }}"
-                                    data-tag-parent-slug="{{ mid.slug }}"
                                     data-tag-name="{{ leaf.name | escape }}"
                                     title="Part of {{ leaf.parent }} — Show items tagged {{ leaf.name | escape }}"
                                     aria-pressed="false"
@@ -210,8 +190,8 @@
                                   </button>
                                 {% endif %}
                               {% endfor %}
-                            {% endif %}
-                          </div>
+                            </div>
+                          {% endif %}
                         {% endif %}
                       {% endfor %}
                     </div>
@@ -226,7 +206,7 @@
   </div>
 
   <p class="pub-tag-filter__hint">
-    Choose a broad area to reveal its children; turning a parent off hides its subtree. Specialist tags stay under their parent only.
+    Broad areas sit on the first row; narrower areas nest underneath. Use the arrows to fold a row. Click a tag to filter; click again to clear.
   </p>
 </section>
 

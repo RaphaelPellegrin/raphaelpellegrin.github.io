@@ -1,5 +1,5 @@
 /**
- * Foldable CV skill groups and a dynamic falling word cloud.
+ * Foldable CV skill groups and a lightweight native word cloud.
  */
 (function () {
   "use strict";
@@ -101,55 +101,49 @@
   }
 
   /**
-   * Whether the user prefers reduced motion.
-   * @returns {boolean}
+   * Lay out word-cloud chips with a spiral search.
+   * @returns {void}
    */
-  function prefersReducedMotion() {
-    return (
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
-  }
+  function layoutCloud() {
+    var canvas = document.querySelector("[data-skills-cloud]");
+    if (!canvas) {
+      return;
+    }
 
-  /**
-   * Compute spiral word-cloud placements.
-   * @param {HTMLElement} canvas Cloud canvas.
-   * @param {HTMLElement[]} words Word nodes.
-   * @returns {{el:HTMLElement,x:number,y:number,rotate:number}[]}
-   */
-  function computePlacements(canvas, words) {
+    var words = Array.prototype.slice.call(
+      canvas.querySelectorAll(".skills-cloud__word")
+    );
+    if (!words.length) {
+      return;
+    }
+
     var width = canvas.clientWidth;
     var height = canvas.clientHeight;
     var cx = width / 2;
     var cy = height / 2;
     var placed = [];
-    var results = [];
 
-    var ordered = words.slice().sort(function (a, b) {
+    words.sort(function (a, b) {
       return (
         Number(b.getAttribute("data-weight") || 3) -
         Number(a.getAttribute("data-weight") || 3)
       );
     });
 
-    ordered.forEach(function (word, index) {
+    words.forEach(function (word, index) {
       var weight = Number(word.getAttribute("data-weight") || 3);
       var fontSize = 0.85 + weight * 0.28;
       var rotate = ((index % 5) - 2) * 8;
       word.style.fontSize = fontSize + "rem";
-      word.style.left = "0px";
-      word.style.top = "0px";
-      word.style.transform = "translate(0, 0) rotate(" + rotate + "deg)";
-      word.style.opacity = "0";
+      word.style.transform = "translate(-50%, -50%) rotate(" + rotate + "deg)";
 
       var rect = word.getBoundingClientRect();
       var box = { w: rect.width + 10, h: rect.height + 8 };
       var found = null;
       var angle = 0;
       var radius = 0;
-      var step;
 
-      for (step = 0; step < 500; step += 1) {
+      for (var step = 0; step < 500; step += 1) {
         angle += 0.35;
         radius = 4 + step * 0.9;
         var x = cx + Math.cos(angle) * radius;
@@ -189,235 +183,8 @@
       }
 
       placed.push(found);
-      results.push({
-        el: word,
-        x: found.x + found.w / 2,
-        y: found.y + found.h / 2,
-        rotate: rotate,
-      });
-    });
-
-    return results;
-  }
-
-  /**
-   * Snap words to their final resting places.
-   * @param {{el:HTMLElement,x:number,y:number,rotate:number}[]} placements Targets.
-   * @returns {void}
-   */
-  function settleImmediate(placements) {
-    placements.forEach(function (item) {
-      item.el.classList.add("is-settled");
-      item.el.style.left = item.x + "px";
-      item.el.style.top = item.y + "px";
-      item.el.style.opacity = "0.92";
-      item.el.style.transform =
-        "translate(-50%, -50%) rotate(" + item.rotate + "deg)";
-    });
-  }
-
-  /**
-   * Animate words falling from above, then stabilize.
-   * @param {{el:HTMLElement,x:number,y:number,rotate:number}[]} placements Targets.
-   * @returns {void}
-   */
-  function animateFall(placements) {
-    var particles = placements.map(function (item, index) {
-      var startY = item.y - (90 + Math.random() * 140 + index * 10);
-      var startX = item.x + (Math.random() * 36 - 18);
-      item.el.classList.remove("is-settled");
-      item.el.style.left = startX + "px";
-      item.el.style.top = startY + "px";
-      item.el.style.opacity = "0";
-      item.el.style.transform =
-        "translate(-50%, -50%) rotate(" + (item.rotate + (Math.random() * 24 - 12)) + "deg)";
-
-      return {
-        el: item.el,
-        x: startX,
-        y: startY,
-        vx: (item.x - startX) * 0.018,
-        vy: 0.4 + Math.random() * 0.55,
-        targetX: item.x,
-        targetY: item.y,
-        rotate: item.rotate + (Math.random() * 24 - 12),
-        targetRotate: item.rotate,
-        delay: index * 55 + Math.random() * 90,
-        started: false,
-        settled: false,
-      };
-    });
-
-    var start = null;
-
-    /**
-     * Spring a value toward a target.
-     * @param {number} value Current value.
-     * @param {number} target Destination.
-     * @param {number} amount Blend amount.
-     * @returns {number}
-     */
-    function lerp(value, target, amount) {
-      return value + (target - value) * amount;
-    }
-
-    /**
-     * Animation frame handler.
-     * @param {number} now Timestamp.
-     * @returns {void}
-     */
-    function frame(now) {
-      if (start === null) {
-        start = now;
-      }
-      var elapsed = now - start;
-      var allSettled = true;
-
-      particles.forEach(function (p) {
-        if (p.settled) {
-          return;
-        }
-        allSettled = false;
-
-        if (!p.started) {
-          if (elapsed < p.delay) {
-            return;
-          }
-          p.started = true;
-          p.el.style.opacity = "0.2";
-        }
-
-        var falling = p.y < p.targetY - 8;
-        if (falling) {
-          p.vy += 0.42;
-          p.vy = Math.min(p.vy, 11);
-          p.y += p.vy;
-          p.x += p.vx;
-          p.rotate = lerp(p.rotate, p.targetRotate, 0.04);
-          p.el.style.opacity = String(Math.min(0.92, 0.2 + (p.y / p.targetY) * 0.7));
-        } else {
-          p.x = lerp(p.x, p.targetX, 0.18);
-          p.y = lerp(p.y, p.targetY, 0.22);
-          p.rotate = lerp(p.rotate, p.targetRotate, 0.2);
-          p.el.style.opacity = "0.92";
-          if (
-            Math.abs(p.x - p.targetX) < 0.4 &&
-            Math.abs(p.y - p.targetY) < 0.4
-          ) {
-            p.x = p.targetX;
-            p.y = p.targetY;
-            p.rotate = p.targetRotate;
-            p.settled = true;
-            p.el.classList.add("is-settled");
-          }
-        }
-
-        p.el.style.left = p.x + "px";
-        p.el.style.top = p.y + "px";
-        p.el.style.transform =
-          "translate(-50%, -50%) rotate(" + p.rotate + "deg)";
-      });
-
-      if (!allSettled) {
-        window.requestAnimationFrame(frame);
-      }
-    }
-
-    window.requestAnimationFrame(frame);
-  }
-
-  var cloudState = {
-    animated: false,
-    placements: /** @type {{el:HTMLElement,x:number,y:number,rotate:number}[]} */ ([]),
-  };
-
-  /**
-   * Lay out (and optionally animate) the word cloud.
-   * @param {{animate?: boolean}} options Layout options.
-   * @returns {void}
-   */
-  function layoutCloud(options) {
-    var animate = !options || options.animate !== false;
-    var canvas = document.querySelector("[data-skills-cloud]");
-    if (!canvas || !(canvas instanceof HTMLElement)) {
-      return;
-    }
-
-    var words = Array.prototype.slice.call(
-      canvas.querySelectorAll(".skills-cloud__word")
-    );
-    if (!words.length) {
-      return;
-    }
-
-    var placements = computePlacements(canvas, words);
-    cloudState.placements = placements;
-
-    if (!animate || prefersReducedMotion()) {
-      settleImmediate(placements);
-      cloudState.animated = true;
-      return;
-    }
-
-    animateFall(placements);
-    cloudState.animated = true;
-  }
-
-  /**
-   * Re-layout after resize without replaying the fall.
-   * @returns {void}
-   */
-  function relayoutSettled() {
-    var canvas = document.querySelector("[data-skills-cloud]");
-    if (!canvas || !(canvas instanceof HTMLElement)) {
-      return;
-    }
-    var words = Array.prototype.slice.call(
-      canvas.querySelectorAll(".skills-cloud__word")
-    );
-    var placements = computePlacements(canvas, words);
-    cloudState.placements = placements;
-    settleImmediate(placements);
-  }
-
-  /**
-   * Start the fall once the cloud enters view.
-   * @returns {void}
-   */
-  function initCloud() {
-    var cloud = document.querySelector(".skills-cloud");
-    if (!cloud) {
-      return;
-    }
-
-    if (prefersReducedMotion()) {
-      layoutCloud({ animate: false });
-      window.addEventListener("resize", relayoutSettled);
-      return;
-    }
-
-    if (!("IntersectionObserver" in window)) {
-      layoutCloud({ animate: true });
-      window.addEventListener("resize", relayoutSettled);
-      return;
-    }
-
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting && !cloudState.animated) {
-            layoutCloud({ animate: true });
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.35 }
-    );
-    observer.observe(cloud);
-    window.addEventListener("resize", function () {
-      if (cloudState.animated) {
-        relayoutSettled();
-      }
+      word.style.left = found.x + found.w / 2 + "px";
+      word.style.top = found.y + found.h / 2 + "px";
     });
   }
 
@@ -430,7 +197,8 @@
       return;
     }
     initFolds();
-    initCloud();
+    layoutCloud();
+    window.addEventListener("resize", layoutCloud);
   }
 
   if (document.readyState === "loading") {
