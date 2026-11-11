@@ -24,7 +24,6 @@ My Erdős number is 4 and my Einstein number is 6. To the best of my knowledge, 
 
 <div class="home-gol" aria-hidden="true">
   <canvas class="home-gol__canvas" data-home-gol></canvas>
-  <p class="home-gol__label">Game of Life</p>
 </div>
 
 <div class="home-plots">
