@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CV skills — foldable chips + native word cloud
+   CV skills — foldable chips
    (Avoid Sass mix()/color-mix() with CSS variables — breaks GH Pages Sass 3.7.)
    ========================================================================== */
 
@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  margin: 0 0 1.35rem;
+  margin: 0;
 }
 
 .skills-group {
@@ -125,50 +125,6 @@
   }
 }
 
-.skills-cloud {
-  position: relative;
-  margin: 0.35rem 0 0;
-  padding: 1rem 1rem 0.75rem;
-  border: 1px solid mix(#fff, $gray, 82%);
-  border-radius: 0.9rem;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse at 18% 20%, rgba(31, 95, 139, 0.12), transparent 42%),
-    radial-gradient(ellipse at 82% 18%, rgba(31, 138, 112, 0.11), transparent 40%),
-    radial-gradient(ellipse at 70% 78%, rgba(91, 75, 138, 0.1), transparent 45%),
-    linear-gradient(180deg, #f7f9fb 0%, #eef3f7 100%);
-}
-
-.skills-cloud__canvas {
-  position: relative;
-  width: 100%;
-  min-height: 220px;
-  height: clamp(220px, 36vw, 320px);
-}
-
-.skills-cloud__word {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--skills-color, $dark-gray);
-  font-family: $sans-serif-narrow;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-  opacity: 0.92;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
-  user-select: none;
-  pointer-events: none;
-}
-
-.skills-cloud__caption {
-  margin: 0.55rem 0 0;
-  color: $gray;
-  font-size: $type-size-6;
-  text-align: center;
-}
-
 html[data-theme="night"] {
   .skills-group {
     border-color: #2a313a;
@@ -194,23 +150,6 @@ html[data-theme="night"] {
   }
 
   .skills-chip__detail {
-    color: #9aa3ad;
-  }
-
-  .skills-cloud {
-    border-color: #2a313a;
-    background:
-      radial-gradient(ellipse at 18% 20%, rgba(142, 192, 245, 0.14), transparent 42%),
-      radial-gradient(ellipse at 82% 18%, rgba(72, 166, 140, 0.12), transparent 40%),
-      radial-gradient(ellipse at 70% 78%, rgba(167, 139, 250, 0.1), transparent 45%),
-      linear-gradient(180deg, #171b22 0%, #12151a 100%);
-  }
-
-  .skills-cloud__word {
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
-  }
-
-  .skills-cloud__caption {
     color: #9aa3ad;
   }
 }
