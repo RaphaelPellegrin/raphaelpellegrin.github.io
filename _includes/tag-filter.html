@@ -130,6 +130,7 @@
                               class="pub-tag pub-tag--{{ mid.slug }}"
                               style="--pub-tag-color: {{ mid.color }};"
                               data-tag-filter="{{ mid.slug }}"
+                              data-tag-parent-slug="{{ root.slug }}"
                               data-tag-name="{{ mid.name | escape }}"
                               title="Part of {{ mid.parent }} — Show items tagged {{ mid.name | escape }}"
                               aria-pressed="false"
@@ -200,6 +201,7 @@
                                     class="pub-tag pub-tag--{{ leaf.slug }}"
                                     style="--pub-tag-color: {{ leaf.color }};"
                                     data-tag-filter="{{ leaf.slug }}"
+                                    data-tag-parent-slug="{{ mid.slug }}"
                                     data-tag-name="{{ leaf.name | escape }}"
                                     title="Part of {{ leaf.parent }} — Show items tagged {{ leaf.name | escape }}"
                                     aria-pressed="false"
@@ -224,7 +226,7 @@
   </div>
 
   <p class="pub-tag-filter__hint">
-    Each column is one branch. Specialist tags sit only under their parent area. Use the arrows to fold a row.
+    Choose a broad area to reveal its children; turning a parent off hides its subtree. Specialist tags stay under their parent only.
   </p>
 </section>
 

@@ -155,6 +155,16 @@
   pointer-events: none;
 }
 
+.pub-tag.is-hierarchy-hidden,
+.pub-tag-col__subgroup.is-hierarchy-hidden,
+.pub-tag-col.is-hierarchy-hidden {
+  display: none !important;
+}
+
+.pub-tag-level.is-hierarchy-empty {
+  display: none;
+}
+
 .pub-tag-level[data-tag-level="1"] .pub-tag-col,
 .pub-tag-level[data-tag-level="2"] .pub-tag-col {
   padding-left: 0.15rem;
