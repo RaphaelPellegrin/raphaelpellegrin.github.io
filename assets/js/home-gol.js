@@ -1,8 +1,124 @@
 /**
- * Subtle Game of Life backdrop for the homepage.
+ * Boxed Game of Life band for the homepage.
+ * Seeds kites (still lifes), gliders, Canada geese, and copperheads.
  */
 (function () {
   "use strict";
+
+  /** @type {Record<string, number[][]>} */
+  var PATTERNS = {
+    kite: [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 2],
+      [2, 1],
+    ],
+    glider: [
+      [0, 1],
+      [1, 2],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ],
+    copperhead: parseRle("b2o2b2o$3b2o$3b2o$obo2bobo$o6bo2$o6bo$b2o2b2o$2b4o2$3b2o$3b2o!"),
+    canadaGoose: parseRle(
+      "3o10b$o9b2ob$bo6b3obo$3b2o2b2o4b$4bo8b$8bo4b$4b2o3bo3b$3bobob2o4b$3bobo2bob2ob$2bo4b2o4b$2b2o9b$2b2o!"
+    ),
+  };
+
+  /**
+   * Parse a single-line Life RLE body into cell offsets.
+   * @param {string} rle RLE pattern body.
+   * @returns {number[][]}
+   */
+  function parseRle(rle) {
+    var cells = [];
+    var row = 0;
+    var col = 0;
+    var count = 0;
+    var i;
+    var ch;
+    for (i = 0; i < rle.length; i += 1) {
+      ch = rle.charAt(i);
+      if (ch >= "0" && ch <= "9") {
+        count = count * 10 + (ch.charCodeAt(0) - 48);
+        continue;
+      }
+      if (count === 0) {
+        count = 1;
+      }
+      if (ch === "b") {
+        col += count;
+      } else if (ch === "o") {
+        while (count > 0) {
+          cells.push([row, col]);
+          col += 1;
+          count -= 1;
+        }
+        count = 0;
+        continue;
+      } else if (ch === "$") {
+        row += count;
+        col = 0;
+      } else if (ch === "!") {
+        break;
+      }
+      count = 0;
+    }
+    return cells;
+  }
+
+  /**
+   * Rotate cell offsets 90° clockwise around the pattern origin box.
+   * @param {number[][]} cells Source cells.
+   * @param {number} turns Number of 90° clockwise turns.
+   * @returns {number[][]}
+   */
+  function rotateCells(cells, turns) {
+    var t = ((turns % 4) + 4) % 4;
+    var out = cells.map(function (cell) {
+      return [cell[0], cell[1]];
+    });
+    var n;
+    var maxR;
+    var maxC;
+    var rotated;
+    for (n = 0; n < t; n += 1) {
+      maxR = 0;
+      maxC = 0;
+      out.forEach(function (cell) {
+        if (cell[0] > maxR) {
+          maxR = cell[0];
+        }
+        if (cell[1] > maxC) {
+          maxC = cell[1];
+        }
+      });
+      rotated = out.map(function (cell) {
+        return [cell[1], maxR - cell[0]];
+      });
+      out = rotated;
+    }
+    return out;
+  }
+
+  /**
+   * Mirror cells horizontally.
+   * @param {number[][]} cells Source cells.
+   * @returns {number[][]}
+   */
+  function flipHorizontal(cells) {
+    var maxC = 0;
+    cells.forEach(function (cell) {
+      if (cell[1] > maxC) {
+        maxC = cell[1];
+      }
+    });
+    return cells.map(function (cell) {
+      return [cell[0], maxC - cell[1]];
+    });
+  }
 
   /**
    * Read whether night theme is active.
@@ -28,17 +144,67 @@
   }
 
   /**
-   * Seed a sparse random pattern.
+   * Stamp a pattern onto the grid with wraparound.
+   * @param {Uint8Array[]} grid Destination grid.
+   * @param {number[][]} cells Pattern cells.
+   * @param {number} row0 Top row.
+   * @param {number} col0 Left column.
+   * @returns {void}
+   */
+  function stamp(grid, cells, row0, col0) {
+    var rows = grid.length;
+    var cols = grid[0].length;
+    cells.forEach(function (cell) {
+      var r = ((row0 + cell[0]) % rows + rows) % rows;
+      var c = ((col0 + cell[1]) % cols + cols) % cols;
+      grid[r][c] = 1;
+    });
+  }
+
+  /**
+   * Seed a composed layout of still lifes and spaceships inside the box.
    * @param {Uint8Array[]} grid Grid to fill.
    * @returns {void}
    */
   function seed(grid) {
+    var rows = grid.length;
+    var cols = grid[0].length;
     var r;
-    var c;
-    for (r = 0; r < grid.length; r += 1) {
-      for (c = 0; c < grid[r].length; c += 1) {
-        grid[r][c] = Math.random() < 0.22 ? 1 : 0;
-      }
+    for (r = 0; r < rows; r += 1) {
+      grid[r].fill(0);
+    }
+
+    var kiteSpots = [
+      [1, 2],
+      [1, Math.max(2, cols - 5)],
+      [Math.max(1, rows - 4), 2],
+      [Math.max(1, rows - 4), Math.max(2, cols - 5)],
+    ];
+    kiteSpots.forEach(function (spot, index) {
+      stamp(grid, rotateCells(PATTERNS.kite, index % 4), spot[0], spot[1]);
+    });
+
+    stamp(grid, PATTERNS.glider, 2, Math.floor(cols * 0.28));
+    stamp(grid, rotateCells(PATTERNS.glider, 1), Math.floor(rows * 0.35), Math.floor(cols * 0.7));
+    stamp(grid, rotateCells(PATTERNS.glider, 2), Math.max(2, rows - 5), Math.floor(cols * 0.45));
+    stamp(grid, rotateCells(PATTERNS.glider, 3), Math.floor(rows * 0.45), 3);
+
+    stamp(grid, PATTERNS.copperhead, Math.max(1, rows - 13), Math.floor(cols * 0.12));
+    stamp(
+      grid,
+      rotateCells(PATTERNS.copperhead, 2),
+      1,
+      Math.max(1, cols - 10)
+    );
+
+    if (rows >= 14 && cols >= 20) {
+      stamp(grid, PATTERNS.canadaGoose, Math.floor(rows * 0.2), Math.floor(cols * 0.5));
+      stamp(
+        grid,
+        flipHorizontal(rotateCells(PATTERNS.canadaGoose, 2)),
+        Math.max(1, rows - 13),
+        Math.floor(cols * 0.35)
+      );
     }
   }
 
@@ -101,16 +267,17 @@
       return;
     }
 
-    var cell = 10;
+    var cell = 9;
     var cols = 0;
     var rows = 0;
     var current = [];
     var next = [];
     var timer = 0;
     var generations = 0;
+    var resizeTimer = 0;
 
     /**
-     * Resize canvas and reseed if geometry changed.
+     * Resize canvas to the boxed container and reseed.
      * @returns {void}
      */
     function resize() {
@@ -119,8 +286,8 @@
       canvas.width = Math.max(1, Math.floor(rect.width * dpr));
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cols = Math.max(8, Math.floor(rect.width / cell));
-      rows = Math.max(6, Math.floor(rect.height / cell));
+      cols = Math.max(16, Math.floor(rect.width / cell));
+      rows = Math.max(10, Math.floor(rect.height / cell));
       current = makeGrid(rows, cols);
       next = makeGrid(rows, cols);
       seed(current);
@@ -137,16 +304,23 @@
       var alive = night ? "rgba(142, 192, 245, 0.28)" : "rgba(31, 95, 139, 0.22)";
       var r;
       var c;
+      var x;
+      var y;
+      var size = cell - 2;
       ctx.clearRect(0, 0, rect.width, rect.height);
       ctx.fillStyle = alive;
       for (r = 0; r < rows; r += 1) {
         for (c = 0; c < cols; c += 1) {
           if (current[r][c]) {
-            ctx.beginPath();
-            ctx.roundRect
-              ? ctx.roundRect(c * cell + 1, r * cell + 1, cell - 2, cell - 2, 2)
-              : ctx.rect(c * cell + 1, r * cell + 1, cell - 2, cell - 2);
-            ctx.fill();
+            x = c * cell + 1;
+            y = r * cell + 1;
+            if (ctx.roundRect) {
+              ctx.beginPath();
+              ctx.roundRect(x, y, size, size, 2);
+              ctx.fill();
+            } else {
+              ctx.fillRect(x, y, size, size);
+            }
           }
         }
       }
@@ -162,7 +336,7 @@
       current = next;
       next = swap;
       generations += 1;
-      if (generations % 90 === 0) {
+      if (generations % 420 === 0) {
         seed(current);
       }
       draw();
@@ -170,10 +344,14 @@
 
     resize();
     draw();
-    timer = window.setInterval(tick, 160);
+    timer = window.setInterval(tick, 140);
+
     window.addEventListener("resize", function () {
-      resize();
-      draw();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(function () {
+        resize();
+        draw();
+      }, 120);
     });
 
     var observer = new MutationObserver(function () {
@@ -189,7 +367,7 @@
         window.clearInterval(timer);
         timer = 0;
       } else if (!timer) {
-        timer = window.setInterval(tick, 160);
+        timer = window.setInterval(tick, 140);
       }
     });
   }
